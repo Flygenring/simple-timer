@@ -2,37 +2,70 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Simple Timer</title>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="vendors/d3.v3.min.js" charset="utf-8"></script>
+    <!--<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>-->
+    <script src="vendors/jquery.min.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>-->
+    <link rel="stylesheet" href="vendors/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css">-->
+    <link href='//fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en' rel='stylesheet' type='text/css'>
+
     <link rel="shortcut icon" href="favicon.ico">
 
     <style>
+        html,body {
+            height: 100%;
+            margin: 0;
+            background-color: #f9f9f9;
+            font-family: 'RobotoDraft', sans-serif;
+        }
+        .navbar { background-color: rgb(30, 128, 240);}
+        .navbar-default .navbar-nav li a,
+        .navbar-default .navbar-brand { color: white }
+        .navbar-default .navbar-toggle .icon-bar { border-color:white; background-color: white}
         body {padding:20px;}
-        #clock { margin: 0 auto; }
-        path.color0 { fill: white; }
-        path.color1 { fill: red; }
+        #clock { margin: 35px auto auto auto;  }
+        path.color0 { fill: #f9f9f9; }
+        path.color1 { fill: #F50057; }
     </style>
 </head>
 <body>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand hidden-sm" href="#">Timer</a>
+        </div>
 
-<a href="https://github.com/mathiasverraes/simple-timer"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/652c5b9acfaddf3a9c326fa6bde407b87f7be0f4/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"></a>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="#" onclick="runTimer(1)">1 min</a></li>
+                <li><a href="#" onclick="runTimer(3)">3 min</a></li>
+                <li><a href="#" onclick="runTimer(5)">5 min</a></li>
+                <li><a href="#" onclick="runTimer(7)">7 min</a></li>
+                <li><a href="#" onclick="runTimer(10)">10 min</a></li>
+                <li><a href="#" onclick="runTimer(15)">15 min</a></li>
+                <li><a href="#" onclick="runTimer(20)">20 min</a></li>
+                <li><a href="#" onclick="runTimer(30)">30 min</a></li>
+                <li><a href="#" onclick="runTimer(45)">45 min</a></li>
+                <li class="hidden-sm"><a href="http://verraes.net/#contact">Contact</a></li>
+            </ul>
 
-<div class="btn-group">
-    <button type="button" class="btn btn-default" onclick="runTimer(60)">1 minute</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(180)">3 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(300)">5 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(480)">7 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(600)">10 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(900)">15 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(1200)">20 minutes</button>
-    <button type="button" class="btn btn-default" onclick="runTimer(1500)">25 minutes</button>
-</div>
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
 
 <div id="clock"></div>
-<audio src="alarm.mp3" id="beep" autostart="false"></audio>
 
+<audio src="alarm.mp3" id="beep" autostart="false"></audio>
 <script>
     var timeoutID;
 
@@ -46,14 +79,25 @@
         }
     }
 
-    function runTimer(timerDuration) {
+    function runTimer(durationinMinutes) {
+
+        ga('send', {
+          'hitType': 'event',
+          'eventCategory': 'Start timer',
+          'eventAction': 'Duration: '+durationinMinutes+'min',
+          'eventLabel': 'Button',
+          'eventValue': durationinMinutes
+        });
+
+        durationinSeconds = durationinMinutes * 60;
+
         clearTimeout(timeoutID);
         clearNode(document.getElementById('clock'));
 
 
         var element = '#clock';
-        var width = window.innerWidth * .9;
-        var height = window.innerHeight * .9;
+        var width = window.innerWidth * .8;
+        var height = window.innerHeight * .8;
         var radius = Math.min(width, height) / 2;
         var pie = d3.layout.pie().sort(null);
 
@@ -102,11 +146,33 @@
         }
 
 
-        timeoutID = loop(timerDuration, 0);
+        timeoutID = loop(durationinSeconds, 0);
     }
 
 
+    // close the navbar on click
+    $(document).ready(function () {
+        $(".navbar-nav li a").click(function(event) {
+            $(".navbar-collapse").collapse('hide');
+        });
+    });
+
+
 </script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-2620608-12', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script src="vendors/bootstrap.min.js"></script>
+<!--<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>-->
 
 </body>
 </html>
